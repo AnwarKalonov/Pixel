@@ -1,4 +1,4 @@
-[# Pixel]([url](https://lantas-pixel.netlify.app/))
+App Link: (https://lantas-pixel.netlify.app/))
 
 ---
 
