@@ -44,7 +44,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private func showHouse() {
         NSApp.setActivationPolicy(.regular)
         if house == nil {
-            let root = NSHostingView(rootView: AppRootView(brain: .shared))
+            let root = NSHostingView(rootView: AppRootView(brain: PixelBrain.shared))
             let window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 880, height: 620),
                 styleMask: [.titled, .closable, .miniaturizable, .resizable],

@@ -1,82 +1,139 @@
 import Foundation
 
-struct ModelClient {
-    struct Message {
-        enum Content {
+public struct ModelClient: Sendable {
+    public struct Message: Sendable {
+        public enum Content: Sendable {
             case text(String)
             case multimodal(prompt: String, imageJPEG: Data)
             case toolCalls([ToolCall], text: String?)
             case toolResult(id: String, output: String)
         }
 
-        var role: String
-        var content: Content
+        public var role: String
+        public var content: Content
+
+        public init(role: String, content: Content) {
+            self.role = role
+            self.content = content
+        }
     }
 
-    struct ToolCall {
-        var id: String
-        var name: String
-        var arguments: [String: Any]
+    public struct ToolCall: Sendable {
+        public var id: String
+        public var name: String
+        public var arguments: [String: AnySendable]
+
+        public init(id: String, name: String, arguments: [String: AnySendable] = [:]) {
+            self.id = id
+            self.name = name
+            self.arguments = arguments
+        }
     }
 
-    struct Reply {
-        var text: String?
-        var toolCalls: [ToolCall]
+    public struct Reply: Sendable {
+        public var text: String?
+        public var toolCalls: [ToolCall]
+
+        public init(text: String?, toolCalls: [ToolCall] = []) {
+            self.text = text
+            self.toolCalls = toolCalls
+        }
     }
 
-    enum ClientError: LocalizedError {
+    public enum ClientError: LocalizedError {
+        case invalidURL(String)
         case http(Int, String)
-        case decode
+        case decode(String)
 
-        var errorDescription: String? {
+        public var errorDescription: String? {
             switch self {
+            case .invalidURL(let u):
+                return "Invalid API Endpoint URL: '\(u)'"
             case .http(let code, let body):
-                return "Model error \(code): \(body.prefix(180))"
-            case .decode:
-                return "Could not read the model reply."
+                return "API error (\(code)): \(body.prefix(180))"
+            case .decode(let reason):
+                return "Could not decode model reply: \(reason)"
             }
         }
     }
 
-    func complete(apiKey: String, model: String, messages: [Message], tools: [[String: Any]]) async throws -> Reply {
-        var request = URLRequest(url: URL(string: "https://api.openai.com/v1/chat/completions")!)
+    public init() {}
+
+    public func complete(
+        endpoint: String,
+        apiKey: String,
+        model: String,
+        messages: [Message]
+    ) async throws -> Reply {
+        let cleanEndpoint = endpoint.trimmingCharacters(in: .whitespacesAndNewlines)
+        var fullURLString = cleanEndpoint
+        if !fullURLString.hasSuffix("/chat/completions") {
+            if fullURLString.hasSuffix("/") {
+                fullURLString += "chat/completions"
+            } else {
+                fullURLString += "/chat/completions"
+            }
+        }
+
+        guard let url = URL(string: fullURLString) else {
+            throw ClientError.invalidURL(fullURLString)
+        }
+
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        if !apiKey.isEmpty {
+            request.addValue("Bearer \(apiKey.trimmingCharacters(in: .whitespacesAndNewlines))", forHTTPHeaderField: "Authorization")
+        }
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: [
-            "model": model,
+
+        // OpenRouter compatibility headers
+        if fullURLString.contains("openrouter.ai") {
+            request.addValue("https://github.com/AnwarKalonov/Pixel", forHTTPHeaderField: "HTTP-Referer")
+            request.addValue("Pixel macOS Notch Assistant", forHTTPHeaderField: "X-Title")
+        }
+
+        let bodyPayload: [String: Any] = [
+            "model": model.trimmingCharacters(in: .whitespacesAndNewlines),
             "messages": messages.map(encode),
-            "tools": tools,
-            "tool_choice": "auto",
-            "temperature": 0.2,
-            "max_tokens": 700
-        ])
+            "temperature": 0.3,
+            "max_tokens": 800
+        ]
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: bodyPayload)
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-        guard (200..<300).contains(code) else {
-            throw ClientError.http(code, String(data: data, encoding: .utf8) ?? "")
-        }
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let choices = json["choices"] as? [[String: Any]],
-              let message = choices.first?["message"] as? [String: Any]
-        else {
-            throw ClientError.decode
+        let httpResponse = response as? HTTPURLResponse
+        let statusCode = httpResponse?.statusCode ?? 0
+
+        guard (200..<300).contains(statusCode) else {
+            let errorBody = String(data: data, encoding: .utf8) ?? "Unknown server response"
+            throw ClientError.http(statusCode, errorBody)
         }
 
-        let text = message["content"] as? String
-        var calls: [ToolCall] = []
-        if let raw = message["tool_calls"] as? [[String: Any]] {
-            for item in raw {
-                let id = item["id"] as? String ?? UUID().uuidString
-                let fn = item["function"] as? [String: Any]
-                let name = fn?["name"] as? String ?? ""
-                let argString = fn?["arguments"] as? String ?? "{}"
-                let args = (try? JSONSerialization.jsonObject(with: Data(argString.utf8))) as? [String: Any] ?? [:]
-                calls.append(ToolCall(id: id, name: name, arguments: args))
-            }
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let messageObj = firstChoice["message"] as? [String: Any] else {
+            throw ClientError.decode(String(data: data, encoding: .utf8) ?? "")
         }
-        return Reply(text: text, toolCalls: calls)
+
+        let replyText = messageObj["content"] as? String
+        return Reply(text: replyText)
+    }
+
+    public func testConnection(
+        endpoint: String,
+        apiKey: String,
+        model: String
+    ) async throws -> String {
+        let testMsg = Message(role: "user", content: .text("Reply with 'Connected successfully' in 3 words."))
+        let reply = try await complete(
+            endpoint: endpoint,
+            apiKey: apiKey,
+            model: model,
+            messages: [testMsg]
+        )
+        return reply.text ?? "Connection verified!"
     }
 
     private func encode(_ message: Message) -> [String: Any] {
@@ -86,7 +143,7 @@ struct ModelClient {
         case .multimodal(let prompt, let imageJPEG):
             let b64 = imageJPEG.base64EncodedString()
             return [
-                "role": "user",
+                "role": message.role,
                 "content": [
                     ["type": "text", "text": prompt],
                     [
@@ -95,20 +152,15 @@ struct ModelClient {
                     ]
                 ]
             ]
-        case .toolCalls(let calls, let text):
-            var body: [String: Any] = ["role": "assistant"]
-            if let text { body["content"] = text }
-            body["tool_calls"] = calls.map { call in
-                let args = (try? JSONSerialization.data(withJSONObject: call.arguments)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
-                return [
-                    "id": call.id,
-                    "type": "function",
-                    "function": ["name": call.name, "arguments": args]
-                ] as [String: Any]
-            }
-            return body
-        case .toolResult(let id, let output):
-            return ["role": "tool", "tool_call_id": id, "content": output]
+        case .toolCalls(_, let text):
+            return ["role": message.role, "content": text ?? ""]
+        case .toolResult(_, let output):
+            return ["role": message.role, "content": output]
         }
     }
+}
+
+public struct AnySendable: @unchecked Sendable {
+    public let value: Any
+    public init(_ value: Any) { self.value = value }
 }

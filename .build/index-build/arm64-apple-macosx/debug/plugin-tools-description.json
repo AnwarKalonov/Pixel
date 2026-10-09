@@ -1,0 +1,325 @@
+{
+  "builtTestProducts" : [
+
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.Pixel-arm64-apple-macosx16.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/sources",
+      "importPath" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/AppRootView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/EyesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/GuideOverlay.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Hands.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ModelClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchPanel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Permissions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelBrain.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ScreenSense.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "Pixel",
+      "moduleOutputPath" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Modules/Pixel.swiftmodule",
+      "objects" : [
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/AppRootView.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/EyesView.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/GuideOverlay.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/Hands.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/ModelClient.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/NotchController.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/NotchPanel.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/NotchView.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/Permissions.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/PixelApp.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/PixelBrain.swift.o",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/ScreenSense.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-enable-batch-mode",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "Pixel_main",
+        "-swift-version",
+        "5",
+        "-Xfrontend",
+        "-experimental-lazy-typecheck",
+        "-Xfrontend",
+        "-experimental-skip-all-function-bodies",
+        "-Xfrontend",
+        "-experimental-allow-module-with-compiler-errors",
+        "-Xfrontend",
+        "-empty-abi-descriptor",
+        "-F",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "pixel"
+      ],
+      "outputFileMapPath" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Modules/Pixel.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : true,
+      "sources" : [
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/AppRootView.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/EyesView.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/GuideOverlay.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Hands.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ModelClient.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchController.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchPanel.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchView.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Permissions.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelApp.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelBrain.swift",
+        "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ScreenSense.swift"
+      ],
+      "tempsPath" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "Pixel" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "Pixel",
+      "-package-name",
+      "pixel",
+      "-incremental",
+      "-c",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/AppRootView.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/EyesView.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/GuideOverlay.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Hands.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ModelClient.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchController.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchPanel.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchView.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Permissions.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelApp.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelBrain.swift",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ScreenSense.swift",
+      "-I",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-enable-batch-mode",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "Pixel_main",
+      "-swift-version",
+      "5",
+      "-Xfrontend",
+      "-experimental-lazy-typecheck",
+      "-Xfrontend",
+      "-experimental-skip-all-function-bodies",
+      "-Xfrontend",
+      "-experimental-allow-module-with-compiler-errors",
+      "-Xfrontend",
+      "-empty-abi-descriptor",
+      "-F",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "pixel",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "Pixel" : [
+
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+
+  },
+  "traitConfiguration" : {
+    "enableAllTraits" : false
+  },
+  "writeCommands" : {
+    "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/AppRootView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/EyesView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/GuideOverlay.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Hands.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ModelClient.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchController.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchPanel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Permissions.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelApp.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelBrain.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ScreenSense.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/Pixel.build/sources"
+    },
+    "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/index-build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "": {
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/master.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/AppRootView.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/AppRootView.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/AppRootView.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/AppRootView~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/AppRootView.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/CapabilitiesDeckView.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/CapabilitiesDeckView.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/CapabilitiesDeckView.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/CapabilitiesDeckView~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/CapabilitiesDeckView.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/EyeState.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeState.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeState.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeState~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeState.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/EyeTracker.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeTracker.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeTracker.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeTracker~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyeTracker.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/EyesView.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyesView.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyesView.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyesView~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/EyesView.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/FocusTimerService.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/FocusTimerService.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/FocusTimerService.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/FocusTimerService~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/FocusTimerService.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/GuideOverlay.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/GuideOverlay.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/GuideOverlay.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/GuideOverlay~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/GuideOverlay.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Hands.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Hands.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Hands.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Hands~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Hands.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/LocalSearchService.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/LocalSearchService.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/LocalSearchService.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/LocalSearchService~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/LocalSearchService.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ModelClient.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ModelClient.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ModelClient.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ModelClient~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ModelClient.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchController.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchController.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchController.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchController~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchController.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchMetrics.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchMetrics.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchMetrics.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchMetrics~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchMetrics.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchPanel.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchPanel.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchPanel.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchPanel~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchPanel.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchShape.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchShape.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchShape.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchShape~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchShape.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/NotchView.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchView.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchView.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchView~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/NotchView.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/Permissions.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Permissions.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Permissions.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Permissions~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/Permissions.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelApp.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelApp.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelApp.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelApp.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelBrain.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelBrain.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelBrain.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelBrain~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelBrain.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/PixelSettings.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelSettings.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelSettings.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelSettings~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/PixelSettings.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ScreenSense.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ScreenSense.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ScreenSense.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ScreenSense~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ScreenSense.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/SettingsDeckView.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SettingsDeckView.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SettingsDeckView.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SettingsDeckView~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SettingsDeckView.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/ShelfService.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ShelfService.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ShelfService.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ShelfService~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/ShelfService.swiftdeps"
+  },
+  "/Users/anwarkalonov/Desktop/Pixel/Pixel/Sources/Pixel/SystemControlsService.swift": {
+    "dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SystemControlsService.d",
+    "object": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SystemControlsService.swift.o",
+    "swiftmodule": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SystemControlsService~partial.swiftmodule",
+    "swift-dependencies": "/Users/anwarkalonov/Desktop/Pixel/Pixel/.build/arm64-apple-macosx/debug/Pixel.build/SystemControlsService.swiftdeps"
+  }
+}

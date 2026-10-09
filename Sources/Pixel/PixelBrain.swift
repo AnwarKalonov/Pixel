@@ -2,357 +2,443 @@ import AppKit
 import Foundation
 import SwiftUI
 
-enum PixelMood: Equatable {
-    case idle
-    case watching
-    case thinking
-    case acting
+public struct ChatMessage: Identifiable, Sendable {
+    public let id: UUID
+    public let role: String
+    public let text: String
+    public let timestamp: Date
+
+    public init(id: UUID = UUID(), role: String, text: String, timestamp: Date = Date()) {
+        self.id = id
+        self.role = role
+        self.text = text
+        self.timestamp = timestamp
+    }
 }
 
 @MainActor
-final class PixelBrain: ObservableObject {
-    @Published var isExpanded = false
-    @Published var look = CGPoint(x: 0, y: 0.42)
-    @Published var blink: CGFloat = 0
-    @Published var mood: PixelMood = .idle
-    @Published var input = ""
-    @Published var status = "I live in the notch. Ask me to look."
-    @Published var isBusy = false
-    @Published var showSettings = false
-    @Published var apiKey = ""
-    @Published var model = "gpt-4o"
+public final class PixelBrain: ObservableObject {
+    public static let shared = PixelBrain()
 
-    var onSizeChange: (() -> Void)?
-
-    private let screen = ScreenSense()
-    private let hands = Hands()
-    private let guide = GuideOverlay()
-    private let client = ModelClient()
-    private var blinkTask: Task<Void, Never>?
-    private var glanceTask: Task<Void, Never>?
-    private var lastMouse = NSEvent.mouseLocation
-
-    var needsSetup: Bool {
-        apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            || !Permissions.screenTrusted
-            || !Permissions.accessibilityTrusted
-    }
-
-    var setupMessage: String {
-        var parts: [String] = []
-        if !Permissions.screenTrusted { parts.append("Allow Screen Recording.") }
-        if !Permissions.accessibilityTrusted { parts.append("Allow Accessibility so I can type.") }
-        if apiKey.isEmpty { parts.append("Add an API key to talk.") }
-        return parts.joined(separator: " ")
-    }
-
-    init() {
-        apiKey = UserDefaults.standard.string(forKey: "pixel.apiKey") ?? ""
-        model = UserDefaults.standard.string(forKey: "pixel.model") ?? "gpt-4o"
-        startLoops()
-        Permissions.promptAccessibility()
-    }
-
-    func expand() {
-        isExpanded = true
-        onSizeChange?()
-    }
-
-    func collapse() {
-        isExpanded = false
-        showSettings = false
-        onSizeChange?()
-        NSApp.windows.first { $0 is NotchPanel }?.makeFirstResponder(nil)
-    }
-
-    func toggleExpanded() {
-        isExpanded ? collapse() : expand()
-    }
-
-    func saveAPIKey(_ value: String) {
-        UserDefaults.standard.set(value, forKey: "pixel.apiKey")
-    }
-
-    func saveModel(_ value: String) {
-        UserDefaults.standard.set(value, forKey: "pixel.model")
-    }
-
-    func requestPermissions() {
-        Permissions.promptAccessibility()
-        Task { _ = await screen.capture() }
-        status = setupMessage.isEmpty ? "Ready." : setupMessage
-    }
-
-    func trackMouse(_ location: CGPoint) {
-        lastMouse = location
-        guard let screen = NSScreen.main else { return }
-        let nx = ((location.x - screen.frame.midX) / (screen.frame.width * 0.42))
-        let nyFromTop = (screen.frame.maxY - location.y) / (screen.frame.height * 0.5)
-        let target = CGPoint(
-            x: max(-1, min(1, nx)),
-            y: max(-1, min(1, nyFromTop * 0.9 - 0.05))
-        )
-        look.x += (target.x - look.x) * 0.28
-        look.y += (target.y - look.y) * 0.22
-        if mood == .idle { mood = .watching }
-    }
-
-    func glance() async {
-        mood = .watching
-        expand()
-        if let shot = await screen.capture() {
-            status = shot.ocr.isEmpty ? "I can see the screen." : shot.ocr.split(separator: "\n").prefix(3).joined(separator: " · ")
-        } else {
-            status = "I need Screen Recording permission to see."
+    // MARK: - Notch Expansion & Eye State
+    @Published public var expansionLevel: ExpansionLevel = .closed
+    @Published public var isHovered: Bool = false
+    @Published public var mood: EyeMood = .idle {
+        didSet {
+            if mood == .sleeping {
+                eyeTracker.look = CGPoint(x: 0, y: 0.8)
+            }
         }
     }
 
-    func submit() async {
+    // MARK: - Live Status & Command Bar
+    @Published public var input: String = ""
+    @Published public var status: String = "Watching display from notch"
+    @Published public var activeActionSummary: String = ""
+    @Published public var isBusy: Bool = false
+    @Published public var showSettings: Bool = false
+
+    // MARK: - Chat Conversation History
+    @Published public var chatMessages: [ChatMessage] = [
+        ChatMessage(role: "assistant", text: "Pixel is ready in your notch. Drop files, control media, or tell me to click and type anywhere.")
+    ]
+
+    // MARK: - Screen & Vision State
+    @Published public var latestOCRText: String = ""
+    @Published public var isProtectedByBlacklist: Bool = false
+
+    // MARK: - Services
+    public let shelf = ShelfService.shared
+    public let controls = SystemControlsService.shared
+    public let localSearch = LocalSearchService.shared
+    public let eyeTracker = EyeTracker.shared
+
+    public var onSizeChange: (() -> Void)?
+    public var onOpenHouse: (() -> Void)?
+
+    private let screen = ScreenSense()
+    private let hands = Hands()
+    private let client = ModelClient()
+    private let overlay = GuideOverlay()
+
+    private var glanceTask: Task<Void, Never>?
+    private var hoverTimer: Task<Void, Never>?
+
+    public init() {
+        Permissions.promptAccessibility()
+    }
+
+    // MARK: - Expansion Level Control
+    public func expand() {
+        setExpansionLevel(.expanded)
+    }
+
+    public func collapse() {
+        setExpansionLevel(.closed)
+    }
+
+    public func toggleExpanded() {
+        if expansionLevel == .expanded {
+            collapse()
+        } else {
+            expand()
+        }
+    }
+
+    public func setExpansionLevel(_ level: ExpansionLevel) {
+        guard expansionLevel != level else { return }
+        expansionLevel = level
+
+        switch level {
+        case .closed:
+            showSettings = false
+            controls.stopCamera()
+            if mood != .sleeping { mood = .idle }
+            activeActionSummary = ""
+
+        case .hoverPeek:
+            controls.refreshMedia()
+            controls.refreshVolume()
+            if controls.isPlaying {
+                status = "\(controls.trackTitle)"
+            } else {
+                status = "Pixel · Idle"
+            }
+
+        case .expanded:
+            controls.refreshMedia()
+            controls.refreshVolume()
+            status = "Pixel AI Deck · ⌥ Space to hide"
+        }
+
+        onSizeChange?()
+    }
+
+    // MARK: - Mouse Hover Expansion
+    public func handleMouseEnter() {
+        guard expansionLevel == .closed else { return }
+        isHovered = true
+
+        let settings = PixelSettings.shared
+        guard settings.hoverExpansionEnabled else { return }
+
+        hoverTimer?.cancel()
+        hoverTimer = Task { [weak self] in
+            let delay = UInt64(settings.hoverDelaySeconds * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: delay)
+            guard let self, !Task.isCancelled, self.isHovered, self.expansionLevel == .closed else { return }
+
+            let targetLevel: ExpansionLevel = settings.hoverExpandToFull ? .expanded : .hoverPeek
+            self.setExpansionLevel(targetLevel)
+        }
+    }
+
+    public func handleMouseExit() {
+        isHovered = false
+        hoverTimer?.cancel()
+        if expansionLevel == .hoverPeek {
+            setExpansionLevel(.closed)
+        }
+    }
+
+    // MARK: - Mouse Tracking
+    public func trackMouse(_ location: CGPoint) {
+        guard let screen = NSScreen.main else { return }
+        let settings = PixelSettings.shared
+
+        let notchCenter = CGPoint(
+            x: screen.frame.midX + settings.notchOffsetX,
+            y: screen.frame.maxY + settings.notchOffsetY
+        )
+
+        // Pass to isolated EyeTracker
+        eyeTracker.updateCursor(
+            location: location,
+            notchCenter: notchCenter,
+            screenSize: screen.frame.size
+        )
+
+        // Notch bounds check
+        let curSize = NotchMetrics.size(for: expansionLevel)
+        let notchRect = CGRect(
+            x: notchCenter.x - curSize.width / 2 - 8,
+            y: screen.frame.maxY + settings.notchOffsetY - curSize.height - 8,
+            width: curSize.width + 16,
+            height: curSize.height + 16
+        )
+
+        let isInside = notchRect.contains(location)
+        if isInside && !isHovered && expansionLevel == .closed {
+            handleMouseEnter()
+        } else if !isInside && isHovered && expansionLevel != .expanded {
+            handleMouseExit()
+        }
+    }
+
+    // MARK: - Eye Mood Triggers
+    public func triggerSmile(duration: Double = 3.5) {
+        eyeTracker.triggerSmile(duration: duration)
+    }
+
+    public func glance() async {
+        glanceTask?.cancel()
+        glanceTask = Task { [weak self] in
+            guard let self else { return }
+            self.mood = .scanning
+            self.status = "Pixel scanning display OCR…"
+            if let shot = await self.screen.capture() {
+                self.latestOCRText = shot.ocr
+                self.status = "Screen scanned (\(shot.words.count) elements found)"
+            }
+            try? await Task.sleep(nanoseconds: 800_000_000)
+            self.mood = .idle
+        }
+    }
+
+    // MARK: - Drop Shelf Integrations
+    public func handleDroppedURL(_ url: URL) {
+        guard let item = shelf.addFile(from: url) else { return }
+        status = "Saved '\(item.filename)' to drop shelf"
+        triggerSmile(duration: 4)
+
+        if expansionLevel == .closed {
+            setExpansionLevel(.hoverPeek)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { [weak self] in
+                if self?.expansionLevel == .hoverPeek {
+                    self?.setExpansionLevel(.closed)
+                }
+            }
+        }
+    }
+
+    public func handleDroppedText(_ text: String) {
+        guard let item = shelf.addSnippet(text: text) else { return }
+        status = "Saved snippet to drop shelf"
+        triggerSmile(duration: 4)
+    }
+
+    public func askAIAboutShelfItem(_ item: ShelfItem) {
+        let content = shelf.readFileContent(for: item)
+        input = "Analyze this file '\(item.filename)': \(content.prefix(300))"
+        expand()
+    }
+
+    // MARK: - Real AI Interaction & Autonomous Screen Navigation
+    public func submit() async {
         let prompt = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !prompt.isEmpty, !isBusy else { return }
         input = ""
-        await run(prompt: prompt)
+
+        chatMessages.append(ChatMessage(role: "user", text: prompt))
+
+        // Easter Egg
+        let lower = prompt.lowercased()
+        if lower.contains("smile") || lower.contains("pixel") || lower.contains("hello") || lower.contains("thank") {
+            triggerSmile(duration: 4.5)
+        }
+
+        // Quick System Controls via Natural Language
+        if lower.contains("mute") {
+            controls.toggleMute()
+            triggerSmile()
+            let msg = controls.isMuted ? "Muted system volume." : "Unmuted system volume."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            return
+        } else if lower.contains("volume") {
+            if let num = extractNumber(from: lower) {
+                controls.setVolume(Double(num))
+                triggerSmile()
+                let msg = "Set system volume to \(num)%."
+                chatMessages.append(ChatMessage(role: "assistant", text: msg))
+                status = msg
+                return
+            }
+        } else if lower.contains("play") || lower.contains("pause") {
+            controls.togglePlayPause()
+            triggerSmile()
+            let msg = "Toggled music playback."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            return
+        } else if lower.contains("next song") || lower.contains("skip") {
+            controls.nextTrack()
+            triggerSmile()
+            let msg = "Skipped to next track."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            return
+        } else if lower.contains("camera") || lower.contains("mirror") {
+            controls.toggleCamera()
+            triggerSmile()
+            let msg = controls.isCameraActive ? "Opened camera mirror." : "Closed camera mirror."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            return
+        }
+
+        // Focus & Pomodoro Timers: "timer 25", "pomodoro", "timer 10m"
+        if lower.starts(with: "timer ") || lower == "pomodoro" || lower.contains("start timer") {
+            let minutes = extractNumber(from: lower) ?? 25
+            FocusTimerService.shared.start(duration: minutes * 60, name: "\(minutes)m Focus")
+            triggerSmile()
+            let msg = "Started \(minutes)-minute focus timer in the notch."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            return
+        } else if lower == "stop timer" || lower == "pause timer" {
+            FocusTimerService.shared.pauseResume()
+            triggerSmile()
+            let msg = FocusTimerService.shared.isRunning ? "Resumed timer." : "Paused timer."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            return
+        }
+
+        // Real Local File Finder
+        if lower.starts(with: "find ") || lower.contains("search ") {
+            let q = prompt.replacingOccurrences(of: "find ", with: "", options: .caseInsensitive)
+                          .replacingOccurrences(of: "search ", with: "", options: .caseInsensitive)
+            await localSearch.search(query: q, in: PixelSettings.shared.indexedDirectories)
+            triggerSmile()
+            let msg = "Found \(localSearch.results.count) matching local files on disk."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            return
+        }
+
+        // Autonomous Screen Navigation: "click [button/text]"
+        if lower.starts(with: "click ") || lower.starts(with: "tap ") {
+            let target = prompt.replacingOccurrences(of: "click ", with: "", options: .caseInsensitive)
+                               .replacingOccurrences(of: "tap ", with: "", options: .caseInsensitive)
+                               .trimmingCharacters(in: .whitespacesAndNewlines)
+            await executeClickOnScreen(target: target)
+            return
+        }
+
+        // Autonomous Typing: "type [text]"
+        if lower.starts(with: "type ") {
+            let textToType = prompt.replacingOccurrences(of: "type ", with: "", options: .caseInsensitive)
+            mood = .executing
+            status = "Typing: \(textToType)…"
+            hands.type(textToType)
+            triggerSmile()
+            let msg = "Typed '\(textToType)' into the active application."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+            mood = .idle
+            return
+        }
+
+        // Execute via Custom User AI API or Local Engine
+        await runModelTask(prompt: prompt)
     }
 
-    private func run(prompt: String) async {
+    // Autonomous Screen Action: Find target via Vision and click it
+    public func executeClickOnScreen(target: String) async {
+        isBusy = true
+        mood = .scanning
+        status = "Scanning display for '\(target)'…"
+
+        guard let shot = await screen.capture() else {
+            isBusy = false
+            mood = .idle
+            let msg = "Could not capture display to locate '\(target)'."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            return
+        }
+
+        latestOCRText = shot.ocr
+
+        if let wordBox = shot.findText(target) {
+            mood = .executing
+            status = "Found '\(target)'. Clicking…"
+            activeActionSummary = "Clicking: \(wordBox.text)"
+
+            // Show visual guide overlay
+            overlay.show(rect: wordBox.rect, message: "Pixel Clicking Here")
+
+            // Look toward target
+            let center = CGPoint(x: wordBox.rect.midX, y: wordBox.rect.midY)
+            hands.moveAndClick(center)
+            triggerSmile(duration: 3)
+
+            let msg = "Clicked '\(wordBox.text)' at screen coordinates (\(Int(center.x)), \(Int(center.y)))."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+        } else {
+            let msg = "Could not find '\(target)' on screen. Make sure the window is visible."
+            chatMessages.append(ChatMessage(role: "assistant", text: msg))
+            status = msg
+        }
+
+        isBusy = false
+        mood = .idle
+        activeActionSummary = ""
+    }
+
+    private func extractNumber(from text: String) -> Int? {
+        let comps = text.components(separatedBy: CharacterSet.decimalDigits.inverted)
+        for c in comps {
+            if let num = Int(c), num >= 0, num <= 100 { return num }
+        }
+        return nil
+    }
+
+    private func runModelTask(prompt: String) async {
         isBusy = true
         mood = .thinking
-        status = "Looking…"
+        status = "AI thinking…"
         defer {
             isBusy = false
             mood = .idle
         }
 
-        guard !apiKey.isEmpty else {
-            status = "Add an OpenAI key (click Key) so I can think."
-            showSettings = true
-            return
-        }
+        let settings = PixelSettings.shared
 
-        var shot = await screen.capture()
-        if shot == nil {
-            status = "I cannot see yet. Enable Screen Recording for Pixel."
-            return
-        }
+        // If user provided custom API Key or Endpoint
+        if !settings.apiBaseURL.isEmpty {
+            var modelMessages: [ModelClient.Message] = [
+                .init(role: "system", content: .text("You are Pixel, a fast native macOS notch assistant with full control over the user's Mac. Be helpful, concise, and direct."))
+            ]
 
-        var messages: [ModelClient.Message] = [
-            .init(role: "system", content: .text(Self.systemPrompt)),
-            .init(role: "user", content: .multimodal(prompt: prompt, imageJPEG: shot!.jpeg))
-        ]
+            // Include recent conversation
+            for msg in chatMessages.suffix(6) {
+                modelMessages.append(.init(role: msg.role, content: .text(msg.text)))
+            }
 
-        for step in 0..<8 {
             do {
                 let reply = try await client.complete(
-                    apiKey: apiKey,
-                    model: model,
-                    messages: messages,
-                    tools: Self.tools
+                    endpoint: settings.apiBaseURL,
+                    apiKey: settings.apiKey,
+                    model: settings.modelName,
+                    messages: modelMessages
                 )
-                if let text = reply.text, reply.toolCalls.isEmpty {
+                if let text = reply.text, !text.isEmpty {
+                    chatMessages.append(ChatMessage(role: "assistant", text: text))
                     status = text
+                    triggerSmile()
                     return
-                }
-                if reply.toolCalls.isEmpty {
-                    status = reply.text ?? "Done."
-                    return
-                }
-                messages.append(.init(role: "assistant", content: .toolCalls(reply.toolCalls, text: reply.text)))
-                for call in reply.toolCalls {
-                    mood = .acting
-                    status = label(for: call)
-                    let result = await execute(call, shot: &shot)
-                    messages.append(.init(role: "tool", content: .toolResult(id: call.id, output: result)))
-                }
-                if step == 7 {
-                    status = "Stopped after a few moves."
                 }
             } catch {
-                status = error.localizedDescription
+                let errText = "API Error: \(error.localizedDescription)"
+                chatMessages.append(ChatMessage(role: "assistant", text: errText))
+                status = errText
                 return
             }
         }
-    }
 
-    private func execute(_ call: ModelClient.ToolCall, shot: inout ScreenSense.Shot?) async -> String {
-        let args = call.arguments
-        switch call.name {
-        case "look":
-            shot = await screen.capture()
-            guard let shot else { return "No screenshot. Grant Screen Recording." }
-            return "OCR:\n\(shot.ocr.prefix(3500))"
-        case "click":
-            guard let nx = number(args, "nx"), let ny = number(args, "ny") else {
-                return "Need nx and ny between 0 and 1."
-            }
-            let current = await existingOrCapture(shot)
-            guard let current else { return "No screen map." }
-            let point = current.point(normalized: CGPoint(x: nx, y: ny))
-            hands.moveAndClick(point)
-            return "Clicked \(Int(point.x)),\(Int(point.y))."
-        case "type":
-            let text = args["text"] as? String ?? ""
-            guard Permissions.accessibilityTrusted else { return "Need Accessibility permission to type." }
-            hands.type(text)
-            return "Typed \(text.count) characters."
-        case "hotkey":
-            let keys = args["keys"] as? String ?? ""
-            guard Permissions.accessibilityTrusted else { return "Need Accessibility permission for keys." }
-            hands.hotkey(keys)
-            return "Pressed \(keys)."
-        case "highlight":
-            let nx = number(args, "nx") ?? 0
-            let ny = number(args, "ny") ?? 0
-            let nw = number(args, "nw") ?? 0.12
-            let nh = number(args, "nh") ?? 0.08
-            let message = args["message"] as? String ?? ""
-            let current = await existingOrCapture(shot)
-            guard let current else { return "No screen map." }
-            let rect = current.rect(normalized: CGRect(x: nx, y: ny, width: nw, height: nh))
-            guide.show(rect: rect, message: message)
-            return "Highlighted. \(message)"
-        case "wait":
-            let ms = number(args, "ms") ?? 400
-            try? await Task.sleep(for: .milliseconds(min(max(ms, 50), 4000)))
-            return "Waited \(Int(ms))ms."
-        default:
-            return "Unknown tool \(call.name)."
+        // Fallback on-device analysis
+        mood = .scanning
+        status = "Analyzing display context on-device…"
+        if let shot = await screen.capture() {
+            latestOCRText = shot.ocr
         }
+        try? await Task.sleep(nanoseconds: 600_000_000)
+        mood = .executing
+        let localReply = "Analyzed screen context (\(latestOCRText.components(separatedBy: "\n").count) visible items). You can ask questions or tell me to click any button."
+        chatMessages.append(ChatMessage(role: "assistant", text: localReply))
+        status = localReply
+        triggerSmile()
     }
-
-    private func number(_ args: [String: Any], _ key: String) -> Double? {
-        if let value = args[key] as? Double { return value }
-        if let value = args[key] as? Int { return Double(value) }
-        if let value = args[key] as? NSNumber { return value.doubleValue }
-        return nil
-    }
-
-    private func existingOrCapture(_ shot: ScreenSense.Shot?) async -> ScreenSense.Shot? {
-        if let shot { return shot }
-        return await screen.capture()
-    }
-
-    private func label(for call: ModelClient.ToolCall) -> String {
-        switch call.name {
-        case "look": return "Looking…"
-        case "click": return "Clicking…"
-        case "type": return "Typing…"
-        case "hotkey": return "Pressing keys…"
-        case "highlight": return "Pointing…"
-        case "wait": return "Waiting…"
-        default: return call.name
-        }
-    }
-
-    private func startLoops() {
-        blinkTask = Task { [weak self] in
-            while !Task.isCancelled {
-                let pause = UInt64.random(in: 2_200_000_000...5_400_000_000)
-                try? await Task.sleep(nanoseconds: pause)
-                guard let self, !Task.isCancelled else { return }
-                self.blink = 1
-                try? await Task.sleep(nanoseconds: 90_000_000)
-                self.blink = 0
-            }
-        }
-        glanceTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 7_000_000_000)
-                guard let self, !Task.isCancelled else { return }
-                if self.mood == .watching {
-                    self.mood = .idle
-                    self.look.y = 0.42
-                    self.look.x *= 0.4
-                }
-            }
-        }
-    }
-
-    private static let systemPrompt = """
-    You are Pixel, a pair of eyes living in a black notch at the top of the Mac.
-    You help by seeing the screen and, when asked, clicking, typing, or pointing.
-    Be brief. Prefer doing over explaining.
-    Coordinates nx, ny, nw, nh are 0...1 of the latest screenshot, origin top-left.
-    After look, use the new OCR. Click the center of the control you mean.
-    Do not run destructive actions (quit apps, delete files, send messages) unless the user clearly asked.
-    When guiding without taking over, use highlight plus one short sentence.
-    """
-
-    private static let tools: [[String: Any]] = [
-        [
-            "type": "function",
-            "function": [
-                "name": "look",
-                "description": "Capture the screen and read visible text.",
-                "parameters": ["type": "object", "properties": [:] as [String: Any]]
-            ]
-        ],
-        [
-            "type": "function",
-            "function": [
-                "name": "click",
-                "description": "Click a point on the screenshot.",
-                "parameters": [
-                    "type": "object",
-                    "properties": [
-                        "nx": ["type": "number"],
-                        "ny": ["type": "number"]
-                    ],
-                    "required": ["nx", "ny"]
-                ]
-            ]
-        ],
-        [
-            "type": "function",
-            "function": [
-                "name": "type",
-                "description": "Type text into the focused field.",
-                "parameters": [
-                    "type": "object",
-                    "properties": ["text": ["type": "string"]],
-                    "required": ["text"]
-                ]
-            ]
-        ],
-        [
-            "type": "function",
-            "function": [
-                "name": "hotkey",
-                "description": "Press a key combo like cmd+c or return.",
-                "parameters": [
-                    "type": "object",
-                    "properties": ["keys": ["type": "string"]],
-                    "required": ["keys"]
-                ]
-            ]
-        ],
-        [
-            "type": "function",
-            "function": [
-                "name": "highlight",
-                "description": "Draw a guide box on screen with a short message.",
-                "parameters": [
-                    "type": "object",
-                    "properties": [
-                        "nx": ["type": "number"],
-                        "ny": ["type": "number"],
-                        "nw": ["type": "number"],
-                        "nh": ["type": "number"],
-                        "message": ["type": "string"]
-                    ],
-                    "required": ["nx", "ny", "message"]
-                ]
-            ]
-        ],
-        [
-            "type": "function",
-            "function": [
-                "name": "wait",
-                "description": "Pause briefly for UI to settle.",
-                "parameters": [
-                    "type": "object",
-                    "properties": ["ms": ["type": "number"]]
-                ]
-            ]
-        ]
-    ]
 }

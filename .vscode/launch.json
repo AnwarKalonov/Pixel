@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Pixel}",
+            "name": "Debug Pixel",
+            "target": "Pixel",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug Pixel"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Pixel}",
+            "name": "Release Pixel",
+            "target": "Pixel",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release Pixel"
+        }
+    ]
+}
